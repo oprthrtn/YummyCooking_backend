@@ -17,29 +17,34 @@ function route($method, $urlList, $requestData)
             return;
         }
 
-        $query = "SELECT Nickname FROM users WHERE Nickname = ?";
-        $stmt = $Link->prepare($query);
-        $stmt->bind_param("s", $nickname);
-        $stmt->execute();
-
-        $stmt->bind_result($output);
-        $stmt->fetch();
-
-
-        if (strlen($output) != 0) {
-            setHTTPStatus(400, 'Пользователь с таким никнеймом уже существует');
-            return;
-        }
-
-
         $password = bin2hex($password);
 
-        $query = "INSERT INTO users (`Nickname`, `Password`) VALUES (?,?)";
 
+        $query = "SELECT Nickname FROM users WHERE `Nickname` = ? AND `Password` = ?";
         $stmt = $Link->prepare($query);
         $stmt->bind_param("ss", $nickname, $password);
         $stmt->execute();
 
-        setHTTPStatus("200", 'Done');
+        $stmt->store_result();
+        $stmt->bind_result($output);
+        $stmt->fetch();
+
+
+        if (strlen($output) === 0) {
+            setHTTPStatus(400, 'Введён неверный логин или пароль');
+            return;
+        }
+
+        $token = openssl_random_pseudo_bytes(16);
+        $token = bin2hex($token);
+
+        $query = "INSERT INTO authorizedusers (`Nickname`, `token`) VALUES (?,?)";
+
+        $stmt = $Link->prepare($query);
+        $stmt->bind_param("ss", $nickname, $token);
+        $stmt->execute();
+
+
+        setHTTPStatus("200", $token);
     }
 }

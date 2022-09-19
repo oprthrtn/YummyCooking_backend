@@ -1,4 +1,5 @@
 <?php
+mysqli_report(MYSQLI_REPORT_ALL);
 include_once 'helpers/headers.php';
 global $Link;
 function getData($method)
