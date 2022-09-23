@@ -1,23 +1,5 @@
 <?php
 
-function checkAuthor($currentNickname, $id, $Link)
-{
-    $query = "SELECT AuthorNickname FROM recipes WHERE ID = ?";
-    $stmt = $Link->prepare($query);
-    $stmt->bind_param("i", intval($id));
-    $stmt->execute();
-    $stmt->store_result();
-    $stmt->bind_result($AuthorNickname);
-    $stmt->fetch();
-
-    echo json_encode([$currentNickname, $AuthorNickname]);
-    if ($currentNickname === $AuthorNickname) {
-        return true;
-    }
-
-    return false;
-}
-
 function route($method, $urlList, $requestData)
 {
     global $Link;
@@ -50,7 +32,6 @@ function route($method, $urlList, $requestData)
             $stmt->bind_result($currentRole);
             $stmt->fetch();
 
-            echo json_encode([$currentNickname, $currentRole]);
             if ($currentRole === "admin") {
                 $query = "UPDATE `recipes` SET `Title`=?,`Description`=?,`CookTime`=?,`Direction`=?,`ImageURL`=? WHERE `ID`=?";
 

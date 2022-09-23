@@ -1,6 +1,7 @@
 <?php
 
 include_once 'helpers/headers.php';
+include_once 'helpers/checkAuthor.php';
 global $Link;
 function getData($method)
 {

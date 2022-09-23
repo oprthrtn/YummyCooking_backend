@@ -1,25 +1,8 @@
 <?php
 
-function checkAuthor($currentNickname, $id, $Link)
-{
-    $query = "SELECT AuthorNickname FROM recipes WHERE ID = ?";
-    $stmt = $Link->prepare($query);
-    $stmt->bind_param("i", intval($id));
-    $stmt->execute();
-    $stmt->store_result();
-    $stmt->bind_result($AuthorNickname);
-    $stmt->fetch();
-
-    echo json_encode([$currentNickname, $AuthorNickname]);
-    if ($currentNickname === $AuthorNickname) {
-        return true;
-    }
-
-    return false;
-}
-
 function route($method, $urlList, $requestData)
 {
+    
     global $Link;
     if ($method === 'DELETE' && count($urlList) === 1 && gettype($urlList[0] === "integer")) {
         $authHeader = apache_request_headers()['Authorization'];
